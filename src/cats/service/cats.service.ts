@@ -2,9 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { Cat } from './cats.schema';
-import { CatRequestDto } from './dto/cats.request.dto';
-import { CatsRepository } from './cats.repository';
+import { Cat } from '../cats.schema';
+import { CatRequestDto } from '../dto/cats.request.dto';
+import { CatsRepository } from '../cats.repository';
 
 @Injectable()
 export class CatsService {
@@ -25,5 +25,23 @@ export class CatsService {
       password: hashedPassword,
     });
     return cat.readOnlyData;
+  }
+
+  //파일 업로드 서비스
+  async uploadImg(cat: Cat, files: Express.Multer.File[]) {
+    const fileName = `cats/${files[0].filename}`;
+
+    console.log(fileName);
+    const newCat = await this.catsRepository.findByIdAndUpdateImg(
+      cat.id,
+      fileName,
+    );
+    return newCat;
+  }
+  //모든 고양이 가져오기 서비스
+  async getAllCat() {
+    const allCat = await this.catsRepository.findAll();
+    const readOnlyCats = allCat.map((cat) => cat.readOnlyData);
+    return readOnlyCats;
   }
 }

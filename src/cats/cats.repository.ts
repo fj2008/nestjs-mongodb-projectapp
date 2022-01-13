@@ -29,4 +29,16 @@ export class CatsRepository {
     const cat = await this.catModel.findById(catId).select('-password'); // select는 원하는것만 골라올 수 있다.
     return cat;
   }
+
+  //이미지 업로드 함수
+  async findByIdAndUpdateImg(id: string, fileName: string) {
+    const cat = await this.catModel.findById(id);
+    cat.imgUrl = `http://localhost:8000/media/${fileName}`;
+    const newCat = await cat.save();
+    return newCat.readOnlyData;
+  }
+  //모든 고양이 던져주는 메서드
+  async findAll() {
+    return await this.catModel.find();
+  }
 }
